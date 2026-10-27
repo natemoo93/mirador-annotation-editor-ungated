@@ -11,6 +11,7 @@ import {
 import annotationForm from '../annotationForm/AnnotationForm';
 import { WindowPlayer } from '../playerReferences';
 import translations from '../locales/locales';
+import { withMaeData } from '../annotationEditable';
 
 /** */
 const mapDispatchToProps = (dispatch, {
@@ -43,9 +44,13 @@ function mapStateToProps(state, {
 
   // This could be removed but it's serve the useEffect in AnnotationForm for now.
   const canvases = getVisibleCanvases(state, { windowId });
-  let annotation = getPresentAnnotationsOnSelectedCanvases(state, { windowId })
-    .flatMap((annoPage) => annoPage.json.items || [])
-    .find((annot) => annot.id === annotationid);
+  // Annotations created outside MAE have no maeData: synthesize it so the regular templates
+  // can edit them (they fall back to the raw IIIF template if that isn't possible).
+  let annotation = withMaeData(
+    getPresentAnnotationsOnSelectedCanvases(state, { windowId })
+      .flatMap((annoPage) => annoPage.json.items || [])
+      .find((annot) => annot.id === annotationid),
+  );
 
   // New annotation has no ID and no templateType defined
   if (!annotation) {

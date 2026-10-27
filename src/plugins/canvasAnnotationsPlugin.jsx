@@ -22,6 +22,7 @@ import {
   scrollToSelectedAnnotation,
 } from './canvasAnnotationsPluginUtils';
 import { useContextParams } from '../contextParams';
+import { isAnnotationEditable } from '../annotationEditable';
 
 // TODO Attention merge M4upstream
 /**
@@ -118,15 +119,17 @@ function CanvasAnnotationsWrapper({
     return canvases.some((canvas) => {
       const anno = annotationsOnCanvases[canvas.id];
       if (!anno) return false;
-      return Object.values(anno).some((value) => {
+      const adapterPageId = config.annotation?.adapter?.(canvas.id)?.annotationPageId;
+      return Object.entries(anno).some(([pageId, value]) => {
         if (value.json && value.json.items) {
-          // need maeData property for edition
-          return value.json.items.some((item) => item.id === annotationId && item.maeData);
+          // editable if created with MAE (maeData) or stored in the adapter's annotation page
+          return value.json.items.some((item) => item.id === annotationId
+            && isAnnotationEditable(item, pageId, adapterPageId));
         }
         return false;
       });
     });
-  }, [canvases, annotationsOnCanvases]);
+  }, [canvases, annotationsOnCanvases, config.annotation]);
 
   const wasCloseCompanionWindowRef = useRef(annotationEditCompanionWindowIsOpened);
   useEffect(() => {

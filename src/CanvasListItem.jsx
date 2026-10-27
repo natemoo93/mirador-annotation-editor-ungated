@@ -15,6 +15,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import AnnotationActionsContext from './AnnotationActionsContext';
 import WhoAndWhenFormSection, { TOOLTIP_MODE } from './annotationForm/WhoAndWhenFormSection';
 import HotkeyTooltip from "./hotkeys/HotkeyTooltip";
+import { isAnnotationEditable } from './annotationEditable';
 
 // TODO missing TRAD
 const CanvasListItem = forwardRef((props, ref) => {
@@ -96,11 +97,13 @@ const CanvasListItem = forwardRef((props, ref) => {
     const { annotationid } = props;
     const annoIds = canvases.map((canvas) => {
       if (annotationsOnCanvases[canvas.id]) {
+        const adapterPageId = context.storageAdapter?.(canvas.id)?.annotationPageId;
         // returns the id of all editable annotations for all canvases in `annotationsOnCanvas`
         return flatten(Object.entries(annotationsOnCanvases[canvas.id])
           .map(([key, value]) => {
             if (value.json && value.json.items) {
-              return value.json.items.filter((item) => item.maeData)
+              return value.json.items
+                .filter((item) => isAnnotationEditable(item, key, adapterPageId))
                 .map((item) => item.id);
             }
             return [];

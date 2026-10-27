@@ -222,7 +222,7 @@ export default class AiiinotateAdapter {
     let rBody;  // annotationList / annotationPage.
 
     while ( nextPage && nextPage.length ) {
-      r = await fetch(this.annotationPageId);
+      r = await fetch(nextPage);
       rBody = await r.json();
       annotationArray = [ ...annotationArray, ...rBody.resources ];
       nextPage = rBody.next;

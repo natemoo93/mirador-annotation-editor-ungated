@@ -262,7 +262,8 @@ const xywhToSvg = ({
   h = parseFloat(h);
   if (fullH) {
     fullH = parseFloat(fullH);
-  } else if (fullW) {
+  }
+  if (fullW) {
     fullW = parseFloat(fullW);
   }
   const svgWh = fullW && fullH
@@ -281,7 +282,7 @@ const xywhToSvg = ({
     <defs/>
     <g><g>
       <path
-        d=' M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${x + h} L ${x} ${y} Z Z'
+        d=' M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} L ${x} ${y} Z Z'
         fill='${TARGET_TOOL_STATE.fillColor}'
         stroke='${TARGET_TOOL_STATE.strokeColor}'
         stroke-width='${TARGET_TOOL_STATE.strokeWidth}'
